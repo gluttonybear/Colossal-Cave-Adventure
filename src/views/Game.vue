@@ -2,20 +2,25 @@
   <el-container style="height: 98vh;">
     <el-main style="width: 80%; position: relative;">
       <div class="map">
-		  <div class="health">
-			  
-		  </div>
-		  <div class="operate">
-		  		<el-button style="button" >	north</el-button>
-				<el-button style="button" >	south</el-button>
-				<el-button style="button" >	east</el-button>
-				<el-button style="button" >	west</el-button>
-		  </div>
-	  </div>
+        <div class="health">
+          <!-- Health bar or other elements can go here -->
+        </div>
+        <div class="operate">
+          <el-button class="game_button">North</el-button>
+          <el-button class="game_button">South</el-button>
+          <el-button class="game_button">East</el-button>
+          <el-button class="game_button">West</el-button>
+        </div>
+      </div>
     </el-main>
-    <el-aside width="20%">
+    <el-aside width="20%" class="log_bg">
+      <div></div>
+      <div class="log_top">
+        <el-button type="danger" icon="el-icon-delete" class="log_button" circle></el-button>
+        <el-button type="info" icon="el-icon-setting" class="settings_button" circle></el-button>
+      </div>
       <div class="log-container">
-        <el-scrollbar  wrap-style="overflow-x:hidden;">
+        <el-scrollbar wrap-style="overflow-x:hidden;">
           <div class="log-entries">
             <p v-for="(log, index) in logs" :key="index" :class="{ 'centered-log': log === 'Game started...' }">{{ log }}</p>
           </div>
@@ -57,16 +62,22 @@ export default {
 
 <style scoped>
 .log-container {
+  background-color: rgba(255,255,2555,0.5);
+  max-height: 93%;
   padding: 20px;
+  margin-top:-10px;
+  margin-bottom:10px;
   box-sizing: border-box;
-  background-color: #2c3b6f;
+  margin-left:20px;
+  margin-right:20px;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  border-radius: 8px;
 }
 .log-entries {
-  background-color: #2c3b6f;
+  background-color: transparent; /* Use transparent to show the background image */
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -81,27 +92,45 @@ export default {
 .log-entries p {
   background-color: #2d999e;
   margin: 0;
-  padding: 10px ;
-  margin-bottom:5px;
+  padding: 10px;
+  margin-bottom: 5px;
   word-wrap: break-word;
   white-space: pre-wrap;
   text-align: left;
   border-radius: 8px;
-  
 }
-
 .centered-log {
   text-align: center;
 }
-
 .map {
-  background: 
-    url('~@/assets/bg.png');
+  background: url('~@/assets/bg.png');
   background-size: 100% 100%;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+.game_button {
+  /* Add styles for game buttons if needed */
+}
+.log_top {
+  padding: 10px;
+  height: 5%;
+  background-color: transparent; /* Use transparent to show the background image */
+}
+.log_button {
+  margin-left: 210px;
+}
+.settings_button {
+  margin-left: 10px;
+   margin-right: -30px;
+}
+.log_bg {
+  background: url('~@/assets/bg.png'); /* Specify your aside background image here */
+  background-size: cover; /* Adjust as needed */
+  position: relative;
+  height: 100%;
+  z-index: 1
 }
 </style>
