@@ -32,7 +32,7 @@ export default {
     return {
       logs: []
     };
-  },0
+  },
   mounted() {
     this.addLog("Game started...");
     // 模拟实时日志
