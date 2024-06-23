@@ -11,16 +11,19 @@
 	    </div>
 	    <!-- 底部 -->
 	    <div class="foot">
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			<el-button type="primary" class="button"></el-button>
-			
-
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
+			<el-button class="button">我是按钮</el-button>
 	    </div>
 	  </div>
 	</div>
