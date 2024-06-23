@@ -1,9 +1,12 @@
 <template>
   <div class="background">
 	  <el-image
-	   :src="require('@/assets/logo.png')"
-	   style="width: 60%px; height: 60%;z-index: 2;position: absolute;top: -10px; left: 33%; "
-	  ></el-image>
+	       :src="require('@/assets/logo.png')"
+	  	 style="width: 57%px; height: 57%;z-index: 1;position: absolute;top: -15px; left: 34%;"
+	      ></el-image>
+	  <div class="copyright">
+	    Copyright© 2024 Team Undefined. All rights reserved.
+	  </div>
     <div class="change">
       <!-- 标题 -->
       <div class="title">
@@ -98,61 +101,86 @@ export default {
 
 <style scoped>
 .background {
-  position: relative;
-  background-image: url(~@/assets/bg.png); /* 修改背景图片 */
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-color: #f0f0f0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background:
+     linear-gradient(to bottom, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.8) 95%, rgba(0, 0, 0, 1) 100%),
+     url('~@/assets/bg.png');
+   background-size: 100% 100%;
+   position: fixed;
+   height: 100%;
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   -webkit-user-select: none; /* Safari */
+     -moz-user-select: none; /* Firefox */
+     -ms-user-select: none; /* Internet Explorer/Edge */
+     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera, and Firefox */
+  
 }
 
 .change {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+  z-index: 2;
+  background-color: rgba(255,255,2555,0.5);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+  flex-direction: column; /* 垂直排列 */
+  width:500px;
+  position: absolute;
+  top: 450px;
 }
-
 .title {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: -17px;
+  margin-top: -8px;
 }
+
 
 .main {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 660px;
+  width: 500px;
+  box-sizing: border-box;
 }
 .input{
-  width: 500px;
+  width: 325px;
+  margin-right:10px;
+  margin-bottom:-20px;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
+
   margin-bottom: -20px;
-  margin-left: -20px;
-  margin-right: -20px;
   background-color: #333;
   padding: 10px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 
 .foot button {
-margin-left: 20px;
-  margin-right: 20px;
+height:120%;
+  margin-left: 70px;
+  margin-right: 70px;
   border: none;
   border-radius: 5px;
   background-color: #333;
   color: #fff;
   cursor: pointer;
 }
+.copyright{
+   width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明背景 */
+    color: #fff; /* 文字颜色 */
+    z-index: 2; /* 确保在其他内容之上 */
+}
+
 </style>
