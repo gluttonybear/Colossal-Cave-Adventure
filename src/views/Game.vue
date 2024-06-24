@@ -12,23 +12,23 @@
             <div class="direction-buttons">
               <el-row type="flex" class="direction-row">
                 <el-col :span="8">
-                  <el-button icon="el-icon-arrow-up" class="go_button" @click="goNorth" circle></el-button>
+                  <el-button icon="el-icon-arrow-up" class="go_button" @click="go('north')" circle></el-button>
                 </el-col>
               </el-row>
               <el-row type="flex" class="direction-row" >
                 <el-col :span="8" style="margin-right:10px;">
-                  <el-button icon="el-icon-arrow-left" class="go_button" @click="goWest" circle></el-button>
+                  <el-button icon="el-icon-arrow-left" class="go_button" @click="go('west')" circle></el-button>
                 </el-col>
                 <el-col :span="8">
                   <el-button icon="el-icon-rank" class="go_button" circle></el-button>
                 </el-col>
                 <el-col :span="8" style="margin-left:10px;">
-                  <el-button icon="el-icon-arrow-right" class="go_button" @click="goEast" circle></el-button>
+                  <el-button icon="el-icon-arrow-right" class="go_button" @click="go('east')" circle></el-button>
                 </el-col>
               </el-row>
               <el-row type="flex" class="direction-row">
                 <el-col :span="8">
-                  <el-button icon="el-icon-arrow-down" class="go_button" @click="goSouth" circle></el-button>
+                  <el-button icon="el-icon-arrow-down" class="go_button" @click="go('south')" circle></el-button>
                 </el-col>
               </el-row>
             </div>
@@ -157,38 +157,62 @@ export default {
         }, 0);
       },
 	requestGame() {
-	  const user = JSON.parse(localStorage.getItem('user'));
-	  const url='/'+ user.name + '/init';
+	  let user = JSON.parse(localStorage.getItem('user'));
+	  let url='/'+ user.name + '/init';
 	  request.get(url).then(res => {
 	    if (res.success === true) {
-	    this.requestIcon(res.data.gameMap.currentRoom.iconID);
+	    this.changeBg(this.requestIcon(res.data.gameMap.currentRoom.iconID));
 	    } else {
 	      Message.error("数据异常！");
 	    }
 	  });
 	},
-	requestIcon(iconID){
-		const url='/icon/'+ iconID;
-		request.get(url).then(res => {
-			console.log(res.data);
-			this.bgurl='http://localhost:8080/game/' + res.data;
-			console.log(this.bgurl);
-			
-		});
-		
+	async requestIcon(iconID){
+		let url='/icon/'+ iconID;
+		let pic=this.bgurl;
+		//console.log("iconID="+ iconID);
+		//request.get(url).then(res => {
+		//	console.log("res.data="+res.data);
+		//	pic = 'http://localhost:8080/game/' + res.data;
+		//	//console.log("pic="+pic);
+		//});
+		let res = await request.get(url);
+		pic = 'http://localhost:8080/game/' + res.data;
+		console.log("pic="+pic);
+		return pic;
 	},
-    goNorth() {
-      this.addLog('向北移动');
-    },
-    goSouth() {
-      this.addLog('向南移动');
-    },
-    goEast() {
-      this.addLog('向东移动');
-    },
-    goWest() {
-      this.addLog('向西移动');
-    },
+	changeBg(url){
+		console.log("url="+this.bgurl);
+		this.bgurl=url;
+		console.log("bg="+this.bgurl);
+	},
+	async go(direction){
+		if(direction==='east'){
+			this.addLog('向东移动');
+		}else if(direction==='west'){
+			this.addLog('向西移动');
+		}else if(direction==='north'){
+			this.addLog('向北移动');
+		}else if(direction==='south'){
+			this.addLog('向南移动');
+		}
+		
+		let user = JSON.parse(localStorage.getItem('user'));
+		let url='/'+ user.name + '/go'+'?args='+direction;
+		let res = await request.get(url);
+		console.log(res)
+		if (res.success === true) {
+					  this.addLog(res.data.message['']);
+					  if(res.data.success === true){
+						  //console.log("res.data.message.bg="+ res.data.message.bg);
+						  let n = await this.requestIcon(res.data.message.bg);
+						  console.log("n="+ n);
+						  this.changeBg(n);
+					  } 
+		} else {
+		  Message.error("数据异常！");
+		}
+	},
     lookAround() {
       this.addLog('环顾四周');
     },
