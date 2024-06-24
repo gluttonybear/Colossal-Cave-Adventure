@@ -2,19 +2,41 @@
   <el-container style="height: 98vh;">
     <el-main style="width: 80%; position: relative;">
       <!-- Your game map and control buttons -->
-      <div class="map">
+      <div class="map" :style="backgroundStyle">
         <div class="health">
           <!-- Health bar or other elements can go here -->
         </div>
         <div class="operate">
           <!-- Control buttons -->
-          <el-button class="game_button" style="position: absolute;top: 850px; left: 210px;" @click="goNorth">向北</el-button>
-          <el-button class="game_button" style="position: absolute;top: 900px; left: 200px;" @click="goSouth">向南</el-button>
-          <el-button class="game_button" style="position: absolute;top: 900px; left: 100px;" @click="goEast">向东</el-button>
-          <el-button class="game_button" style="position: absolute;top: 900px; left: 300px;" @click="goWest">向西</el-button>
-          <el-button class="game_button" style="position: absolute;top: 900px; left: 400px;" @click="lookAround">查看</el-button>
-          <el-button class="game_button" style="position: absolute;top: 900px; left: 500px;" @click="goBack">后退</el-button>
-          <el-button class="game_button" style="position: absolute;top: 900px; left: 600px;" @click="openBag">背包</el-button>
+          <el-popover placement="top" width="200" trigger="hover" popper-class="direction-popover">
+            <div class="direction-buttons">
+              <el-row type="flex" class="direction-row">
+                <el-col :span="8">
+                  <el-button icon="el-icon-arrow-up" class="go_button" @click="goNorth" circle></el-button>
+                </el-col>
+              </el-row>
+              <el-row type="flex" class="direction-row" >
+                <el-col :span="8" style="margin-right:10px;">
+                  <el-button icon="el-icon-arrow-left" class="go_button" @click="goWest" circle></el-button>
+                </el-col>
+                <el-col :span="8">
+                  <el-button icon="el-icon-rank" class="go_button" circle></el-button>
+                </el-col>
+                <el-col :span="8" style="margin-left:10px;">
+                  <el-button icon="el-icon-arrow-right" class="go_button" @click="goEast" circle></el-button>
+                </el-col>
+              </el-row>
+              <el-row type="flex" class="direction-row">
+                <el-col :span="8">
+                  <el-button icon="el-icon-arrow-down" class="go_button" @click="goSouth" circle></el-button>
+                </el-col>
+              </el-row>
+            </div>
+            <el-button slot="reference" class="game_button">前进</el-button>
+          </el-popover>
+          <el-button class="game_button" @click="lookAround">查看</el-button>
+          <el-button class="game_button" @click="goBack">后退</el-button>
+          <el-button class="game_button" @click="openBag">背包</el-button>
         </div>
       </div>
 
@@ -25,13 +47,13 @@
             <template slot-scope="scope">
               <img :src="scope.row.icon" alt="icon" style="width: 50px; height: 50px;">
             </template>
-          </el-table-column>      
-          <el-table-column prop="name" label="物品名称" width="120"></el-table-column>    
+          </el-table-column>
+          <el-table-column prop="name" label="物品名称" width="120"></el-table-column>
           <el-table-column label="数量" width="200">
             <template slot-scope="scope">
               <div class="item-quantity">
                 <el-slider v-model="scope.row.selectedQuantity" :max="scope.row.quantity" style="width: 70%;"></el-slider>
-                <el-input  min="0" :max="scope.row.quantity" v-model.number="scope.row.selectedQuantity" style="width: 100px; text-align: center;margin-left:10px;margin-right:10px;" class="custom-input"></el-input>
+                <el-input min="0" :max="scope.row.quantity" v-model.number="scope.row.selectedQuantity" style="width: 100px; text-align: center; margin-left:10px; margin-right:10px;" class="custom-input"></el-input>
                 / {{ scope.row.quantity }}
               </div>
             </template>
@@ -87,10 +109,12 @@
 </template>
 
 <script>
+import request from "@/utils/request"
 export default {
   name: 'Game',
   data() {
     return {
+	  bgurl: 'http://localhost:8080/game/background/rooms/room1.png',
       logs: [],
       bagItems: [
         { name: 'Sword', icon: 'path/to/sword.png', quantity: 1, weight: 5, selectedQuantity: 1 },
@@ -111,19 +135,48 @@ export default {
       const start = (this.currentPage - 1) * 5;
       const end = start + 5;
       return this.bagItems.slice(start, end);
-    }
+    },
+    backgroundStyle() {
+      return {
+        backgroundImage: `url(${this.bgurl})`
+			};
+		}
+	},
+  created(){
+	this.requestGame();
   },
   methods: {
     addLog(message) {
-      this.logs.push(message);
-      if (this.logs.length > 100) {
-        this.logs.shift(); // Keep log entries within 100
-      }
-      this.$nextTick(() => {
-        const logContainer = this.$el.querySelector('.log-entries');
-        logContainer.scrollTop = logContainer.scrollHeight;
-      });
-    },
+        this.logs.push(message);
+        if (this.logs.length > 100) {
+          this.logs.shift(); // Keep log entries within 100
+        }
+        setTimeout(() => {
+          const logContainer = this.$el.querySelector('.log-entries');
+          logContainer.scrollTop = logContainer.scrollHeight;
+        }, 0);
+      },
+	requestGame() {
+	  const user = JSON.parse(localStorage.getItem('user'));
+	  const url='/'+ user.name + '/init';
+	  request.get(url).then(res => {
+	    if (res.success === true) {
+	    this.requestIcon(res.data.gameMap.currentRoom.iconID);
+	    } else {
+	      Message.error("数据异常！");
+	    }
+	  });
+	},
+	requestIcon(iconID){
+		const url='/icon/'+ iconID;
+		request.get(url).then(res => {
+			console.log(res.data);
+			this.bgurl='http://localhost:8080/game/' + res.data;
+			console.log(this.bgurl);
+			
+		});
+		
+	},
     goNorth() {
       this.addLog('向北移动');
     },
@@ -176,6 +229,16 @@ export default {
 </script>
 
 <style scoped>
+.el-row {
+  padding: 10px 0;
+  margin-bottom: 10px; /* 调整 el-row 之间的垂直间距 */
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.el-col {
+  border-radius: 4px;
+}
 .log-container {
   background-color: rgba(255, 255, 255, 0.5);
   max-height: 93%;
@@ -218,7 +281,6 @@ export default {
   text-align: center;
 }
 .map {
-  background: url('~@/assets/bg.png');
   background-size: 100% 100%;
   position: absolute;
   top: 0;
@@ -226,9 +288,35 @@ export default {
   width: 100%;
   height: 100%;
 }
+.operate{
+	background-color: rgba(255,255,2555,0.5);
+	border-radius: 15px;
+	padding: 5px 22px 5px 0px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+	display: flex; /* 添加了flex布局 */
+	flex-direction: column; /* 垂直排列 */
+	width:200px;
+	position: absolute;
+	top: 700px;
+	left:50px;
+}
 .game_button {
   padding: 10px;
-  width: 60px;
+  margin:10px;
+  width: 100%;
+}
+.direction-popover {
+  background-color: rgba(255, 255, 255, 0.5); /* Set popover background color here */
+}
+.direction-row{
+	padding-bottom:0px;
+	margin-bottom:0px;
+}
+.direction-buttons {
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .log_top {
   padding: 10px;
